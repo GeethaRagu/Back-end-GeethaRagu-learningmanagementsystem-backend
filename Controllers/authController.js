@@ -4,7 +4,7 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const registeruser = async (req, res, next) => {
-  console.log(req.body);
+  //console.log(req.body);
   const {
     username,
     email,
@@ -50,7 +50,7 @@ export const loginUser = async (req, res, next) => {
       return next(errorHandler(400, "All the Fields Are Required"));
     }
     try {
-      const userDetail = await User.findOne({ email });
+      const userDetail = await User.findOne({ email }).populate("courses");
       const userPassword = bcryptjs.compareSync(password, userDetail.password);
       if (!userDetail || !userPassword) {
         return next(errorHandler(400, "Invalid Credentials"));
@@ -114,3 +114,5 @@ export const loginUser = async (req, res, next) => {
       next(error);
     }
   };
+
+

@@ -30,9 +30,6 @@ export const getcourse = async (req, res, next) => {
 
 export const addcourse = async (req, res, next) => {
   const userid = req.body.userId;
-  //console.log(email);
-  //const { courses } = req.body;
-  //console.log(courses);
   try {
     const cuser = await User.findById(userid);
     cuser.courses = [
@@ -41,11 +38,15 @@ export const addcourse = async (req, res, next) => {
       ];
  await cuser.save();
   const user1 = await User.findById(userid).populate("courses");
-  console.log(user1);
+  user1.save();
+  const { password: passkey, ...rest } = user1._doc;
+ // console.log(user1);
   res
       .status(200)
-      .json({ message: "Course added Successfully", result: user1 });
+      .json({ message: "Course added Successfully", rest });
   } catch (error) {
     next(error)
   }
 };
+
+

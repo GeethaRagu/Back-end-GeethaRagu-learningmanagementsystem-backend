@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
+      unique: true,
     },
     email: {
       type: String,
@@ -46,6 +47,17 @@ const userSchema = new mongoose.Schema(
       ref: "Course",
       default:[]
     }],
+    mentorname:{
+      type: String,
+    },
+    performance:{
+      type: String,
+    
+    },
+    assessment:{
+      type: String,
+      
+    },
   },
   { timestamps: true }
 );
