@@ -7,17 +7,7 @@ import checkoutRoute from "./Routers/checkoutRoutes.js";
 import courseRoute from "./Routers/courseRoute.js";
 import mentorRoute from "./Routers/mentorRoute.js";
 import userRoute from "./Routers/userRoute.js";
-import Stripe from "stripe";
 
-
-const stripe = new Stripe('sk_test_51PUAAe04drKBJ3c6UnsAS58yFz84I5CrmtwPpsvqXdkMR3foMS7mlc76dcWjonQQ0L4ZppRrOT4cYA2egbXKBCGZ00B5YoCr84', {
-  apiVersion: '2020-08-27',
-});
-
-
-const product = await stripe.products.create({
-  name: 'Gold Plan',
-});
 
 dotenv.config();
 
@@ -25,6 +15,7 @@ const app = express();
 
 //middleware
 app.use(express.json());
+app.use(express.static("public"));
 app.use(cors());
 
 

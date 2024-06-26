@@ -1,31 +1,47 @@
-import Razorpay from "razorpay";
-import dotenv from "dotenv";
+import Stripe from 'stripe';
+import dotenv from 'dotenv';
+
+
 dotenv.config();
+const stripe = new Stripe(process.env.STRIPE_TEST_KEY);
+//console.log(process.env.STRIPE_TEST_KEY);
 
-// razor pay
-const razorpay = new Razorpay({
-  key_id:process.env.RAZORPAY_KEY_ID,
-  key_secret:process.env.RAZORPAY_KEY_SECRET
-});
-
-export const createOrder = async(req,res)=>{
-  const options = {
-    amount: req.body.amount,
-    currency: req.body.currency,
-    receipt : "order_receiptId_11",
-    payment_capture: 1
+const calculateOrderAmount = (items) => {
+  // Replace this constant with a calculation of the order's amount
+  // Calculate the order total on the server to prevent
+  // people from directly manipulating the amount on the client
+ //console.log(items);
+ let price = 0;
+ let totalprice =0;
+ items.forEach(async (el) => {
+        // let menu_item = await req.models.menu_item.findOne({ _id: el.id });
+        // price += parseInt(menu_item.price);
+        // console.log(menu_item.price) // first 12 second 9
+        // console.log(price) // first 12 second 21
+        price += parseInt(el.courseprice);
+       // price = 1400;
+        
+      });
+      totalprice = price * 100;
+  return totalprice;
 };
-try {
-    const response = await razorpay.orders.create(options)
-    res.json({
-        order_id: response.id,
-        currency: response.currency,
-        amount: response.amount,
-    })
-} catch (err) {
-   res.status(400).send('Not able to create order. Please try again!');
-}
-}
 
+export const createOrder = async (req, res) => {
+  const { items } = req.body;
+  // console.log(items);
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: calculateOrderAmount(items),
+    currency: "inr",
+    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+    automatic_payment_methods: {
+      enabled: true,
+    },
+  });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
+}
 
 
