@@ -73,7 +73,7 @@ export const loginUser = async (req, res, next) => {
   export const google = async (req, res, next) => {
     const { email, name, profilePic } = req.body;
     try {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).populate("courses");
       if (user) {
         const token = jwt.sign(
           { id: user._id, isAdmin: user.isAdmin },
